@@ -50,7 +50,7 @@ data_compare <- full_join(discharge,discharge_Jan,
 
 ### **Exercise 2**
 
-Let\'s determine what percentage of Alaskan household are speaking only English!
+Let's determine what percentage of Alaskan household are speaking only English!
 
 The data: https://doi.org/10.5063/F1N58JPP
 
@@ -67,7 +67,55 @@ The data: https://doi.org/10.5063/F1N58JPP
 3.  Create a plot to visualize this data
 
 ```{r}
+library(metajam)
+
+url <- "https://knb.ecoinformatics.org/knb/d1/mn/v2/object/urn%3Auuid%3A7fc6f6db-c5ea-426a-a743-1f2edafb43b8"
+
+## save it to here directory
+local_path <- "."
+
+ metajam::download_d1_data(url, local_path)
+
+```
+
+Reading csv in R
+
+```{r}
+
+## this is a list with the metadata attached (units, names etc.)
+ ak_household_data <- metajam::read_d1_files("doi_10.5063_F1N58JPP__household_language__csv/")
+ 
 
 
+ 
+```
 
+Compute the percentage of Alaskan household speaking only English from 2009 to 2015
+
+```{r}
+## Extract datafram out of the list
+ 
+ data <- ak_household_data$data
+ 
+ ## Percentage
+ 
+ data_2009_20015 <- data %>% 
+   # filter(Year %in% c(2009:2015))
+   filter(Year >= "2009" & Year<= "2015") %>%
+   #state level not city level
+   group_by(Year) %>% 
+   summarize(percent_english  = sum(speak_only_english)/sum(total))
+ 
+ ##
+  data_2009_20015_2 <- data %>% 
+   # filter(Year %in% c(2009:2015))
+   filter(Year >= "2009" & Year<= "2015") %>%
+   #state level not city level
+    mutate(only_english_percent = speak_only_english/total) %>% 
+   group_by(Year) %>% 
+   summarize(percent_english  = mean(only_english_percent, 
+                                     na.rm =TRUE))
+ 
+ 
+ ggplot(data_2009_20015, aes(x = Year, y = percent_english)) + geom_line()
 ```
