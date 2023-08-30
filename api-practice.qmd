@@ -1,0 +1,73 @@
+---
+title: "API Practice"
+format: html
+editor: visual
+---
+
+-   Using `dataRetrieval` get the the discharge (ft³/s) time-series for the Ventura River (site `11118500`) during the recent Hilary tropical storm from 2023-08-19 to 2023-08-22
+
+-   Plot the time-series usgin `ggplot2`
+
+-   What was the maximum discharge during this period of time?
+
+```{r}
+library(dataRetrieval)
+library(tidyverse)
+
+siteNumber <- "11118500"
+parameterCd <- "00060" # Discharge
+startDate <- "2023-08-19"
+endDate <- "2023-08-22"
+
+discharge <- readNWISdv(siteNumber, parameterCd, startDate, endDate)
+
+ggplot(discharge, aes(x = Date, y = discharge$X_00060_00003 )) + geom_line()
+
+# Max discharge
+max(discharge$X_00060_00003)
+
+
+## 2023 January 9 storm
+
+siteNumber2 <- "11118500"
+parameterCd2 <- "00060" # Discharge
+startDate2 <- "2023-01-08"
+endDate2 <- "2023-01-12"
+
+discharge_Jan <- readNWISdv(siteNumber2, parameterCd2, startDate2, endDate2)
+
+ggplot(discharge_Jan, aes(x = Date, y = discharge_Jan$X_00060_00003 )) + geom_line() 
+
+
+## Join 
+
+data_compare <- full_join(discharge,discharge_Jan, 
+                          by = join_by(site_no))
+
+```
+
+## Metajam
+
+### **Exercise 2**
+
+Let\'s determine what percentage of Alaskan household are speaking only English!
+
+The data: https://doi.org/10.5063/F1N58JPP
+
+1.  Read the metadata on the website
+
+2.  Start a new R script and write a code to:
+
+    -   download the data `household_language.csv` using `metajam`
+
+    -   Read the data into R using `metajam`
+
+    -   compute the percentage of Alaskan household speaking only English from 2009 to 2015
+
+3.  Create a plot to visualize this data
+
+```{r}
+
+
+
+```
